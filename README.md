@@ -1,6 +1,6 @@
 # FlowTP
 
-This repository contains the official implementation and manuscript for our paper **FlowTP: Conditional Flow Matching with Dual-Schedule Guidance for Controllable Therapeutic Peptide Generation**, a conditional generative framework for therapeutic peptide design.
+This repository contains the official implementation of **FlowTP: Conditional Flow Matching with Dual-Schedule Guidance for Controllable Therapeutic Peptide Generation**, a conditional generative framework for therapeutic peptide design. It provides the source code, configuration, processed data splits, and local ESM-2 weights required by the implementation. The manuscript source and figures are not included in this repository.
 
 ---
 
@@ -8,15 +8,18 @@ This repository contains the official implementation and manuscript for our pape
 
 ```text
 .
-|-- 代码/    # Source code, datasets, configuration, and local ESM-2 weights
-`-- 论文/    # Manuscript source and figures
+|-- data/split_v2/  # Training, validation, and reference datasets
+|-- ESM2-8M/        # Local ESM-2 model and tokenizer files
+|-- model/           # Flow-matching model and supporting layers
+|-- utils/           # Dataset and utility modules
+|-- config.ini       # Training and sampling configuration
+|-- environment.yml  # Conda environment specification
+|-- train.py         # Model training entry point
+|-- sample.py        # Sequence generation and metric evaluation
+`-- evaluate.py      # Evaluation entry point for an existing FASTA file
 ```
 
-All commands below should be run from the `代码` directory:
-
-```bash
-cd 代码
-```
+All commands below should be run from the repository root (the directory containing `train.py`).
 
 ---
 
@@ -41,7 +44,7 @@ To train the conditional flow-matching model from scratch, run:
 python train.py
 ```
 
-The training configuration is defined in `config.ini`. Training and validation data are read from `data/split_v2/`, and checkpoints are written to `save_model/`. If `save_model/checkpoint_flow.pth` exists, training resumes automatically from that checkpoint.
+The training configuration is defined in `config.ini`. Training and validation data are read from `data/split_v2/`. The `save_model/` directory is created automatically at runtime, and training checkpoints are written there. If `save_model/checkpoint_flow.pth` exists, training resumes automatically from that checkpoint.
 
 ### Notation Convention
 
@@ -51,7 +54,17 @@ The implementation uses the endpoint notation in the reverse direction from the 
 
 ## 4. Sampling and Metric Evaluation
 
-After preparing the trained flow-matcher and task-specific decoder checkpoints in `save_model/`, generate peptide sequences and compute the built-in evaluation metrics with:
+The pretrained generation checkpoints are not included in this code repository. Before sampling, place the flow-matcher checkpoint and the three task-specific decoder checkpoints expected by `sample.py` in `save_model/`:
+
+```text
+save_model/
+|-- flowy_matcher_model.pkl
+|-- antimicrobial_decoder_model_1.pkl
+|-- antifungal_decoder_model_1.pkl
+`-- antiviral_decoder_model_1.pkl
+```
+
+Then generate peptide sequences and compute the built-in evaluation metrics with:
 
 ```bash
 # Antimicrobial peptides (AMPs)
@@ -76,7 +89,7 @@ To evaluate an existing FASTA file using the same metric implementation, run:
 python evaluate.py --task amp --input results/amp.fasta
 ```
 
-The built-in evaluation reports pseudo-perplexity, sequence entropy, similarity to the corresponding reference set, and instability.
+The evaluation path uses the model components loaded by `sample.py`, so the checkpoint files listed above are also required when evaluating an existing FASTA file. The built-in evaluation reports pseudo-perplexity, sequence entropy, similarity to the corresponding reference set, and instability.
 
 ---
 
