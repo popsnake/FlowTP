@@ -1,0 +1,62 @@
+{
+  "assignment_seed": 2024,
+  "base_commit": "4bedf73b2baa090287e3db352e280e2099a436c2",
+  "created_at_utc": "2026-08-12T17:10:21.053554+00:00",
+  "method": "minimal deterministic reassignment of cross-split model-input groups",
+  "model_input_key": "strip(sequence).upper()[:50]",
+  "output": {
+    "audit": {
+      "casefold_overlap_keys": 0,
+      "model_input_overlap_keys": 0,
+      "raw_exact_overlap_keys": 0,
+      "train_unique_model_inputs": 21346,
+      "val_unique_model_inputs": 6286
+    },
+    "train_label_counts": {
+      "class_0_activity_0": 3541,
+      "class_0_activity_1": 11912,
+      "class_1_activity_0": 4600,
+      "class_1_activity_1": 4008,
+      "class_2_activity_0": 190,
+      "class_2_activity_1": 2386
+    },
+    "train_path": "data/split_v2/train.csv",
+    "train_rows": 26637,
+    "train_sha256": "21ba4d42219c24a1768112a46603597f1cb08a042673b3c7a20706ad17557ba4",
+    "val_label_counts": {
+      "class_0_activity_0": 856,
+      "class_0_activity_1": 3023,
+      "class_1_activity_0": 1097,
+      "class_1_activity_1": 1015,
+      "class_2_activity_0": 53,
+      "class_2_activity_1": 583
+    },
+    "val_path": "data/split_v2/val.csv",
+    "val_rows": 6627,
+    "val_sha256": "366bad7f1d96db6ad36b810009e227e048038af236a17aca3a76255e48d1eed2"
+  },
+  "overlap_resolution": {
+    "groups_assigned_to_train": 43,
+    "groups_assigned_to_val": 18,
+    "overlapping_model_input_groups": 61,
+    "rows_moved_train_to_val": 18,
+    "rows_moved_val_to_train": 44
+  },
+  "schema_version": 1,
+  "source": {
+    "audit": {
+      "casefold_overlap_keys": 0,
+      "model_input_overlap_keys": 61,
+      "raw_exact_overlap_keys": 0,
+      "train_unique_model_inputs": 21364,
+      "val_unique_model_inputs": 6329
+    },
+    "train_path": "data/train.csv",
+    "train_rows": 26611,
+    "train_sha256": "5184256d0ec29ae5166eb0b2212dd04bb144a8e8c601631bc1a37be8767852a0",
+    "val_path": "data/val.csv",
+    "val_rows": 6653,
+    "val_sha256": "17199e17f77456d624eca59a9c3abaf207a7573ebea796b40a2088623a93b436"
+  },
+  "train_fraction": 0.7999939874939875
+}

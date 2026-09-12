@@ -6,7 +6,12 @@ from transformers import AutoModel
 from .layers.SinusoidalPositionEmbeddings import SinusoidalPositionEmbeddings
 
 class FlowMatcher(nn.Module):
-    def __init__(self, esm_model_path, flow_embedding, flow_mlp):
+    def __init__(
+        self,
+        esm_model_path,
+        flow_embedding,
+        flow_mlp,
+    ):
         super(FlowMatcher, self).__init__()
         self.flow_embedding = flow_embedding
         self.flow_mlp = flow_mlp
@@ -50,11 +55,28 @@ class FlowMatcher(nn.Module):
         mlp_list.append(nn.Linear(self.flow_mlp[-1], self.flow_embedding))
         self.mlp = nn.Sequential(*mlp_list)
 
+    def _prepare_attention_mask(self, attention_mask, x):
+        if attention_mask.ndim != 2:
+            raise ValueError(
+                "attention_mask must have shape [batch, sequence], "
+                f"got {tuple(attention_mask.shape)}"
+            )
+        if attention_mask.shape != x.shape[:2]:
+            raise ValueError(
+                "attention_mask and x must share batch and sequence dimensions, "
+                f"got {tuple(attention_mask.shape)} and {tuple(x.shape[:2])}"
+            )
+
+        attention_mask = attention_mask[:, None, None, :].expand(
+            attention_mask.shape[0], 1, attention_mask.shape[1], attention_mask.shape[1]
+        )
+        attention_mask = attention_mask.to(device=x.device, dtype=x.dtype)
+
+        return attention_mask
+
     def forward(self, x, time, y_class, y_activity, attention_mask=None, return_attn_matrix=False):
         if attention_mask is not None:
-            attention_mask = attention_mask[:, None, None, :].expand(
-                attention_mask.shape[0], 1, attention_mask.shape[1], attention_mask.shape[1]
-            )
+            attention_mask = self._prepare_attention_mask(attention_mask, x)
 
         time_emb = self.time_emb(time)
         label_emb_class = self.label_emb_class(y_class, self.training)
